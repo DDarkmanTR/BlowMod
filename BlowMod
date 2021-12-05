@@ -3126,3 +3126,108 @@ function changeHue() {
 }
 
 setInterval(changeHue, 10);
+
+// ==UserScript==
+// @name         MooMoo.io | For Slow/Low-spec Laptops and PCs |
+// @namespace    -
+// @version      1.5
+// @description  This script will slightly raise the FPS in the game but you will be forced to lose some of the game(Informative elements or just extra elements and so on)!WARNING!It better working with cheats becs cheats can use much computer res(if u have slow pc)
+// @name:ru      MooMoo.io | Для Медленных/Слабых ноутбуков и ПК |
+// @description:ru О дадова!Я короч сделал скрипт который тебе поднимет FPS и опустит Ping на твоём втором пентиуме.Так что давай братан устанавливай время от жизни не зря же терял?)!ВНИМАНИЕ!Скрипт лучше работает если вы используете читы т.к. чит может использовать много ресурсов пк(если у вас слабый пк)
+// @author       Зачем ты меня доводишь?
+// @match        *://moomoo.io/*
+// @match        *://sandbox.moomoo.io/*
+// @match        *://dev.moomoo.io/*
+// @match        *://beta.moomoo.io/*
+// @match        *://abc.moomoo.io/*
+// @grant        none
+// @require      https://cdnjs.cloudflare.com/ajax/libs/howler/2.0.4/howler.core.min.js
+// @require      https://code.jquery.com/jquery-3.2.1.min.js
+// @require      https://code.jquery.com/ui/1.12.1/jquery-ui.js
+// @icon         https://image.flaticon.com/icons/svg/888/888952.svg
+// ==/UserScript==
+/* what me need remove/hide:
+nothing :)
+
+
+Ctrl + c , Ctrl + v
+document.getElementById('').remove();
+*/
+document.getElementById('itemInfoHolder').remove();
+document.getElementById('killCounter').remove();
+document.getElementById('topInfoHolder').remove();
+document.getElementById('ageText').remove();
+document.getElementById('chatButton').remove();
+document.getElementById('diedText').remove();
+document.getElementById('upgradeCounter').remove();
+document.getElementById('mapDisplay').remove();
+$("moomooio_728x90_home").hide();
+$(".inParty").hide();
+$("#gameName").hide();
+$("#loadingText").hide();
+$("#errorNotification").hide();
+document.getElementById('promoImgHolder').remove();
+document.getElementById('youtuberOf').remove();
+document.getElementById('linksContainer2').remove();
+$("#adCard").hide();
+$(".menuHeader").hide();
+$(".menuText").hide();
+$(".ytLink").hide();
+$("#youtuberOf").remove();
+$("#followText").remove();
+$("#twitterFollow").remove();
+$("#adCard").remove();
+$("#mobileInstructions").remove();
+$("#promoImgHolder").remove();
+$("#downloadButtonContainer").remove();
+$("#mobileDownloadButtonContainer").remove();
+$(".downloadBadge").remove();
+$("div[style*='inline-block']").css('display', 'block');
+$("div#menuCard.adCard").remove();
+document.getElementById('adCard').remove();
+document.getElementById('errorNotification').remove();
+document.getElementById("promoImg").remove();
+document.getElementById("twitterFollow").remove();
+document.getElementById("youtubeFollow").remove();
+$("#youtuberOf").hide();
+$("#followText").hide();
+$("#twitterFollow").hide();
+$("#youtubeFollow").hide();
+$("#adCard").hide();
+$("#mobileInstructions").hide();
+$("#promoImgHolder").hide();
+$("#downloadButtonContainer").hide();
+$("#mobileDownloadButtonContainer").hide();
+$(".downloadBadge").hide();
+$("div[style*='inline-block']").css('display', 'block');
+$("div[style*='inline-block']").css('display', 'block');
+document.getElementById("moomooio_728x90_home").style.display = "none";
+$("#moomooio_728x90_home").parent().css({display: "none"});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//Hi bro,why u read this text?I too dk...But i test my script on my rly slow pc and I have already removed ping twice.So it maybe be popular script :)
