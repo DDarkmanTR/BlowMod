@@ -6,10 +6,10 @@
 // @author       T_T
 // @match        *://moomoo.io/*
 // @require      https://greasyfork.org/scripts/423602-msgpack/code/msgpack.js
-// @grant        none
+// @icon         http://moomoo.io/img/icons/skull.png
+// @grantnone
 // ==/UserScript==
 // Script in greasyfork: https://greasyfork.org/ru/scripts/431370-BlowMod-v6-new-menu-and-more
-
 // Ping Adapter...
 (function() {
     'use strict'
