@@ -10,53 +10,6 @@
 // ==/UserScript==
 // Script in greasyfork: https://greasyfork.org/ru/scripts/431370-BlowMod-v6-new-menu-and-more
 
-// Ping Adapter...
-(function() {
-    'use strict'
-    class Main {
-        constructor(status) {
-            this.status = status
-        }
-        RemoveAd() {
-            try {
-                setTimeout(() => ($('#ot-sdk-btn-floating').remove(), $('#pre-content-container').remove()), 3000)
-                document.getElementById("moomooio_728x90_home").style.display = "none"
-                $("#moomooio_728x90_home").parent().css("display", "none")
-                $("#moomooio_728x90_home").remove()
-                $('#adCard').remove()
-                $("#adBlock").remove()
-            } catch (e) {}
-        }
-        AdapterPing() {
-            try {
-                $("#errorNotification").remove()
-                $("#youtuberOf").remove()
-                $("#followText").remove()
-                $("#promoImgHolder").remove()
-                $("#twitterFollow").remove()
-                $("#linksContainer2").remove()
-                $("#youtubeFollow").remove()
-                $("#mobileInstructions").remove()
-                $("#downloadButtonContainer").remove()
-                $("#mobileDownloadButtonContainer").remove()
-                $(".downloadBadge").remove()
-            } catch (e) {}
-        }
-        AdapterFPS() {
-            try {
-                window.location.native_resolution = true
-            } catch (e) {}
-        }
-    }
-    const MAIN = new Main("Work")
-    console.log("Status: " + MAIN.status)
-    queueMicrotask(MAIN.AdapterPing)
-    queueMicrotask(MAIN.AdapterFPS)
-    queueMicrotask(MAIN.RemoveAd)
-    const $el_PING = $("#pingDisplay")
-    $el_PING.css("display", "block")
-    $("body").append($el_PING)
-})()
 
 // Menu toggler...
 let keyMenu = "27"
@@ -267,7 +220,7 @@ let GameMenu = `
         <section class="InvisibleElementForScroll" id="ScrollElement8"></section>
         <fieldset>
             <legend align="center">Commands</legend>
-            <SettingText>Prefix: <input type="text" class="inputTxt" style="width: 50px;" id="PrefixCommands" maxlength="1" value="!" placeholder="Prefix..."></SettingText>
+            <SettingText>Prefix: <input type="text" class="inputTxt" style="width: 50px;" id="PrefixCommands" maxlength="1" value="" placeholder="Prefix..."></SettingText>
             <hr>
             <SettingText>Clan: </SettingText><br>
             <MiniSettingText>[Prefix]join NAME</MiniSettingText><br>
@@ -1012,84 +965,9 @@ let HudMenu = `
 
 // Info menu...
 const HTML = `
-<div class="TimeDate"></div>
-<div class="Fps">FPS: Loading...</div>
-<div id="Coord">Loading...</div>
-<div id="ItemCount">Not defined...</div>
+<div id="Coord"></div>
 <style>
-    #ItemCount {
-        position: absolute;
-        color: #fff;
-        font-size: 20px;
-        top: 150px;
-        left: 20px;
-        background: rgba(0, 0, 0, 0.25);
-        width: 200px;
-        height: 30px;
-        border-radius: 4px;
-        padding-left: 5px;
-        padding-top: 7px;
-        text-align: center;
-    }
-    #StopWalkBtn {
-    cursor: url(
-    display: none;
-    position: absolute;
-    top: 10vh;
-    left: 44%;
-    width: auto;
-    height: auto;
-    background: #4a4a4a;
-    border: 1px solid black;
-    border-radius: 15px;
-    color: white;
-    font-size: 30px;
-    padding: 5px;
-    }
-    #itemInfoHolder {
-    top: 190px !important;
-    }
-    #Coord {
-        position: absolute;
-        color: #fff;
-        font-size: 20px;
-        top: 70px;
-        left: 20px;
-        background: rgba(0, 0, 0, 0.25);
-        width: 200px;
-        height: 30px;
-        border-radius: 4px;
-        padding-left: 5px;
-        padding-top: 7px;
-        text-align: center;
-    }
-
-    .TimeDate {
-        position: absolute;
-        color: #fff;
-        font-size: 20px;
-        top: 110px;
-        left: 20px;
-        background: rgba(0, 0, 0, 0.25);
-        width: 85px;
-        height: 30px;
-        border-radius: 4px;
-        padding-top: 7px;
-        text-align: center;
-    }
-
-    .Fps {
-        position: absolute;
-        color: #fff;
-        font-size: 20px;
-        top: 110px;
-        left: 110px;
-        background: rgba(0, 0, 0, 0.25);
-        width: 85px;
-        height: 30px;
-        border-radius: 4px;
-        padding-top: 7px;
-        text-align: center;
+    
     }
 </style>
 <script>
@@ -2072,7 +1950,6 @@ const HANDLER = (e) => {
     }
     Date.now() - ma.last > 2000 && ma.meaning > 0 && (ma.last = Date.now(), ma.meaning -= 1)
     Date.now() - ma2.last > 1 && ma2.meaning > 0 && (ma2.last = Date.now(), ma2.meaning -= 3)
-    Coord.innerText = `X: ${myX}, Y: ${myY}`
     enemiesNear ? nearEnemy = enemiesNear.sort((a, b) => send.dist(a) - send.dist(b))[0] : ""
     if (!nearEnemy) {
         nearEnemyAngle = myDir
@@ -3102,132 +2979,3 @@ const RELOAD = setInterval(() => {
     }
 }, 250)
 newDOM()
-
-// ==UserScript==
-// @name         Lightbulb's Rainbow Health Bar for MooMoo.io
-// @version      1.0
-// @description  Makes team members (and yourself) have color-changing health bars! Client-side only, others cannot see it.
-// @author       Lightbulb
-// @match        *://*.moomoo.io/*
-// @grant        none
-// @namespace https://greasyfork.org/users/721571
-// ==/UserScript==
-
-let hue = 0;
-
-let replaceInterval = setInterval(() => {
-if (CanvasRenderingContext2D.prototype.roundRect) {
-  CanvasRenderingContext2D.prototype.roundRect = ((oldFunc) => function() { if (this.fillStyle == "#8ecc51") this.fillStyle = `hsl(${hue}, 100%, 50%)`; return oldFunc.call(this, ...arguments); })(CanvasRenderingContext2D.prototype.roundRect);
-  clearInterval(replaceInterval);
-}}, 10);
-
-function changeHue() {
-  hue += Math.random() * 3;
-}
-
-setInterval(changeHue, 10);
-
-// ==UserScript==
-// @name         MooMoo.io | For Slow/Low-spec Laptops and PCs |
-// @namespace    -
-// @version      1.5
-// @description  This script will slightly raise the FPS in the game but you will be forced to lose some of the game(Informative elements or just extra elements and so on)!WARNING!It better working with cheats becs cheats can use much computer res(if u have slow pc)
-// @name:ru      MooMoo.io | Для Медленных/Слабых ноутбуков и ПК |
-// @description:ru О дадова!Я короч сделал скрипт который тебе поднимет FPS и опустит Ping на твоём втором пентиуме.Так что давай братан устанавливай время от жизни не зря же терял?)!ВНИМАНИЕ!Скрипт лучше работает если вы используете читы т.к. чит может использовать много ресурсов пк(если у вас слабый пк)
-// @author       Зачем ты меня доводишь?
-// @match        *://moomoo.io/*
-// @match        *://sandbox.moomoo.io/*
-// @match        *://dev.moomoo.io/*
-// @match        *://beta.moomoo.io/*
-// @match        *://abc.moomoo.io/*
-// @grant        none
-// @require      https://cdnjs.cloudflare.com/ajax/libs/howler/2.0.4/howler.core.min.js
-// @require      https://code.jquery.com/jquery-3.2.1.min.js
-// @require      https://code.jquery.com/ui/1.12.1/jquery-ui.js
-// @icon         https://image.flaticon.com/icons/svg/888/888952.svg
-// ==/UserScript==
-/* what me need remove/hide:
-nothing :)
-
-
-Ctrl + c , Ctrl + v
-document.getElementById('').remove();
-*/
-document.getElementById('itemInfoHolder').remove();
-document.getElementById('killCounter').remove();
-document.getElementById('topInfoHolder').remove();
-document.getElementById('ageText').remove();
-document.getElementById('chatButton').remove();
-document.getElementById('diedText').remove();
-document.getElementById('upgradeCounter').remove();
-document.getElementById('mapDisplay').remove();
-$("moomooio_728x90_home").hide();
-$(".inParty").hide();
-$("#gameName").hide();
-$("#loadingText").hide();
-$("#errorNotification").hide();
-document.getElementById('promoImgHolder').remove();
-document.getElementById('youtuberOf').remove();
-document.getElementById('linksContainer2').remove();
-$("#adCard").hide();
-$(".menuHeader").hide();
-$(".menuText").hide();
-$(".ytLink").hide();
-$("#youtuberOf").remove();
-$("#followText").remove();
-$("#twitterFollow").remove();
-$("#adCard").remove();
-$("#mobileInstructions").remove();
-$("#promoImgHolder").remove();
-$("#downloadButtonContainer").remove();
-$("#mobileDownloadButtonContainer").remove();
-$(".downloadBadge").remove();
-$("div[style*='inline-block']").css('display', 'block');
-$("div#menuCard.adCard").remove();
-document.getElementById('adCard').remove();
-document.getElementById('errorNotification').remove();
-document.getElementById("promoImg").remove();
-document.getElementById("twitterFollow").remove();
-document.getElementById("youtubeFollow").remove();
-$("#youtuberOf").hide();
-$("#followText").hide();
-$("#twitterFollow").hide();
-$("#youtubeFollow").hide();
-$("#adCard").hide();
-$("#mobileInstructions").hide();
-$("#promoImgHolder").hide();
-$("#downloadButtonContainer").hide();
-$("#mobileDownloadButtonContainer").hide();
-$(".downloadBadge").hide();
-$("div[style*='inline-block']").css('display', 'block');
-$("div[style*='inline-block']").css('display', 'block');
-document.getElementById("moomooio_728x90_home").style.display = "none";
-$("#moomooio_728x90_home").parent().css({display: "none"});
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//Hi bro,why u read this text?I too dk...But i test my script on my rly slow pc and I have already removed ping twice.So it maybe be popular script :)
