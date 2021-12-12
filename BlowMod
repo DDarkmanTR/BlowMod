@@ -2,7 +2,6 @@
 // @name         BlowMod
 // @namespace    none
 // @version      ???
-// @description  BuildCount, v8-FixBigPing, SaveChat, FastInsta, AutoCoordWalk, AFKMode, R-InstaKill, AutoHeal, AutoAntiBull, AntiInsta, FollowAnimals, AutoFarmResource, M-TripleWASDMills, UpArrow-Katana+Musket, H-Turret, N-Mill, V-spike, F-Trap, Z-TankGear, Shift-BiomeHats, Esc-BetterMenu, AutoAntiBull, MouseClicks, BetterHotBar, OneTickInsta. Please rate this script in the comments! I'm trying really hard! Give me your support!
 // @author       T_T
 // @match        *://moomoo.io/*
 // @require      https://greasyfork.org/scripts/423602-msgpack/code/msgpack.js
@@ -197,7 +196,7 @@ let GameMenu = `
             <legend align="center">Other</legend>
             <SettingText>Spam clan <label class="checkbox-green"><input type="checkbox" id="SpamClan"><span class="checkbox-green-switch" data-label-on="On" data-label-off="Off"></span></label> <input type="text" class="inputTxt" id="SpamClanName" value="BluwMud" placeholder="Message..."></SettingText><br>
             <SettingText>Spam chat <label class="checkbox-green"><input type="checkbox" id="SpamChat"><span class="checkbox-green-switch" data-label-on="On" data-label-off="Off"></span></label> <input type="text" class="inputTxt" id="SpamChatName" value="BlowMod" placeholder="Message..."></SettingText><br>
-            <SettingText>Send msg if near enemy <label class="checkbox-green"><input type="checkbox" id="helloMode"><span class="checkbox-green-switch" data-label-on="On" data-label-off="Off"></span></label> <input type="text" class="inputTxt" id="MsgText" value="hello!" placeholder="Message..."></SettingText><br>
+            <SettingText>Send msg if near enemy <label class="checkbox-green"><input type="checkbox" id="helloMode"><span class="checkbox-green-switch" data-label-on="On" data-label-off="Off"></span></label> <input type="text" class="inputTxt" id="MsgText" value="" placeholder="Message..."></SettingText><br>
             <SettingText>Auto anti bull [beta]<label class="checkbox-green"><input type="checkbox" id="AutoAntiBull"><span class="checkbox-green-switch" data-label-on="On" data-label-off="Off"></span></label></SettingText><br>
             <SettingText>360° hit <label class="checkbox-green"><input type="checkbox" id="angleGlitch"><span class="checkbox-green-switch" data-label-on="On" data-label-off="Off"></span></label></SettingText><br>
             <SettingText>Auto respawn <label class="checkbox-green"><input type="checkbox" id="AutoRespawn"><span class="checkbox-green-switch" data-label-on="On" data-label-off="Off"></span></label> <input type="text" class="inputTxt" id="AutoRespawnName" maxlength="15" placeholder="Name..." \></SettingText><br>
@@ -246,11 +245,11 @@ let GameMenu = `
                 <br>
                 360° hit: <input style="width: 100px;" id="hit360" class="inputTxt" onKeyPress=SupressInput(event); oncontextmenu="return false" placeholder="Bind..." value="KeyI" type="text">
                 <br>
-                Bull Helmet: <input style="width: 100px;" id="BindBull" class="inputTxt" onKeyPress=SupressInput(event); oncontextmenu="return false" placeholder="Bind..." value="KeyT" type="text">
+                Bull Helmet: <input style="width: 100px;" id="BindBull" class="inputTxt" onKeyPress=SupressInput(event); oncontextmenu="return false" placeholder="Bind..." value="KeyY" type="text">
                 <br>
-                Samurai Armor: <input style="width: 100px;" id="BindSamurai" class="inputTxt" onKeyPress=SupressInput(event); oncontextmenu="return false" placeholder="Bind..." value="KeyB" type="text">
+                Samurai Armor: <input style="width: 100px;" id="BindSamurai" class="inputTxt" onKeyPress=SupressInput(event); oncontextmenu="return false" placeholder="Bind..." value="KeyC" type="text">
                 <br>
-                Emp Helmet: <input style="width: 100px;" id="BindEmp" class="inputTxt" onKeyPress=SupressInput(event); oncontextmenu="return false" placeholder="Bind..." value="KeyY" type="text">
+                Emp Helmet: <input style="width: 100px;" id="BindEmp" class="inputTxt" onKeyPress=SupressInput(event); oncontextmenu="return false" placeholder="Bind..." value="KeyT" type="text">
             </SettingText>
         </fieldset>
         <section class="InvisibleElementForScroll" id="ScrollElement10"></section>
@@ -2979,23 +2978,6 @@ const RELOAD = setInterval(() => {
     }
 }, 250)
 newDOM()
-
-// ==UserScript==
-// @name       moomoo sounds
-// @namespace    https://justgamersmoomooscripts.glitch.me
-// @version    1.06
-// @description Give some sound to moomoo.io!
-// @author       Justgamer101
-// @match        *://sandbox.moomoo.io/*
-// @match        *://dev.moomoo.io/*
-// @match        *://moomoo.io/*
-// @grant    none
-// @require https://greasyfork.org/scripts/423602-msgpack/code/msgpack.js
-// ==/UserScript==
-//add sound vol by distance
-
-
-//if you would like the script to intercept packets (bypasses curse filter, with more features to come!)
 const ALLOW_PACKET_INTERCEPT = true;
 
 const load_all_sounds = true;
