@@ -83,7 +83,7 @@ border-radius: 10px;
 // BlowMod-Menu
 let GameMenu = `
 <div class="blockMenu" style="display: none;">
-    <img src="http://s1.iconbird.com/ico/2013/8/429/w512h5121377940132185095settingsstreamline.png" align="bottom" style="text-align: bottom;" id="imgTitle">
+    <img src="http://moomoo.io/img/icons/skull.png" style="text-align: bottom;" id="imgTitle">
     <div class="titleMenu">Setting<span class="twoTitleName">BlowMod</span></div>
     <hr>
     <div class="ScrollFixedPositionBlock">
@@ -335,10 +335,10 @@ let GameMenu = `
         cursor: url(
     }
     #nameInput {
-        cursor: url(https://media.discordapp.net/attachments/878345257786429471/889989640277336084/cursor_text_moomoomod_1.png), default;
+        cursor: url(
     }
     input[type="text"] {
-    cursor: url(https://media.discordapp.net/attachments/878345257786429471/889989640277336084/cursor_text_moomoomod_1.png), default;
+    cursor: url(
     }
     .ScrollElementBox:link, .ScrollElementBox:visited {
         color: #6a1919;
@@ -3325,7 +3325,7 @@ $('#linksContainer2').html('<a href="./docs/versions.txt" target="_blank" class=
 // document.getElementById("gameUI").style.backgroundImage = "url('')";
 // document.getElementById("mainMenu").style.backgroundImage = "url('')";
 document.getElementById('enterGame').innerHTML = '? Play ?';
-document.getElementById('loadingText').innerHTML = 'Loadding...';
+document.getElementById('loadingText').innerHTML = 'Loading...';
 document.getElementById('nameInput').placeholder = "Username";
 document.getElementById('chatBox').placeholder = "Message";
 document.getElementById('diedText').innerHTML = '? Get Burnt ?';
@@ -3532,3 +3532,5 @@ function changeHue() {
 }
 
 setInterval(changeHue, 10);
+
+alert('Youre Welcome')
