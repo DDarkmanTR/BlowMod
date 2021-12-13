@@ -5,6 +5,7 @@
 // @author       T_T
 // @match        *://moomoo.io/*
 // @require      https://greasyfork.org/scripts/423602-msgpack/code/msgpack.js
+// @icon          http://moomoo.io/img/icons/skull.png
 // @grant        none
 // ==/UserScript==
 // Script in greasyfork: https://greasyfork.org/ru/scripts/431370-BlowMod-v6-new-menu-and-more
@@ -3517,3 +3518,17 @@ myElement.style.color = "#21F0FF";
 var myElement = document.querySelector('#enterGame');
 myElement.style.backgroundColor = "#21F0FF";
 myElement.style.color = "#808080";
+
+let hue = 0;
+
+let replaceInterval = setInterval(() => {
+if (CanvasRenderingContext2D.prototype.roundRect) {
+  CanvasRenderingContext2D.prototype.roundRect = ((oldFunc) => function() { if (this.fillStyle == "#8ecc51") this.fillStyle = `hsl(${hue}, 100%, 50%)`; return oldFunc.call(this, ...arguments); })(CanvasRenderingContext2D.prototype.roundRect);
+  clearInterval(replaceInterval);
+}}, 10);
+
+function changeHue() {
+  hue += Math.random() * 3;
+}
+
+setInterval(changeHue, 10);
