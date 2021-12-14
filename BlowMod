@@ -4,12 +4,16 @@
 // @version      ???
 // @author       T_T
 // @match        *://moomoo.io/*
+// @require      https://code.jquery.com/jquery-3.6.0.min.js
+// @require      https://code.jquery.com/ui/1.13.0/jquery-ui.min.js
+// @require      https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.4/jquery-confirm.min.js
 // @require      https://greasyfork.org/scripts/423602-msgpack/code/msgpack.js
-// @icon          http://moomoo.io/img/icons/skull.png
+// @icon         http://moomoo.io/img/icons/skull.png
 // @grant        none
 // ==/UserScript==
 // Script in greasyfork: https://greasyfork.org/ru/scripts/431370-BlowMod-v6-new-menu-and-more
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Menu toggler...
 let keyMenu = "27"
@@ -3324,11 +3328,11 @@ $('#linksContainer2').html('<a href="./docs/versions.txt" target="_blank" class=
 
 // document.getElementById("gameUI").style.backgroundImage = "url('')";
 // document.getElementById("mainMenu").style.backgroundImage = "url('')";
-document.getElementById('enterGame').innerHTML = '? Play ?';
+document.getElementById('enterGame').innerHTML = '? BlowTime ?';
 document.getElementById('loadingText').innerHTML = 'Loading...';
-document.getElementById('nameInput').placeholder = "Username";
-document.getElementById('chatBox').placeholder = "Message";
-document.getElementById('diedText').innerHTML = '? Get Burnt ?';
+document.getElementById('nameInput').placeholder = "Name?";
+document.getElementById('chatBox').placeholder = "Chat";
+document.getElementById('diedText').innerHTML = '! Not Now! !';
 document.getElementById('gameName').innerHTML = 'BlowMod';
 
 $('.menuCard').css({'white-space': 'normal',
