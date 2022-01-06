@@ -4,9 +4,6 @@
 // @version      ???
 // @author       T_T
 // @match        *://moomoo.io/*
-// @require      https://code.jquery.com/jquery-3.6.0.min.js
-// @require      https://code.jquery.com/ui/1.13.0/jquery-ui.min.js
-// @require      https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.4/jquery-confirm.min.js
 // @require      https://greasyfork.org/scripts/423602-msgpack/code/msgpack.js
 // @icon         http://moomoo.io/img/icons/skull.png
 // @grant        none
@@ -2972,569 +2969,222 @@ function newDOM() {
     $("#gameName").css("display", "none")
 }
 
-const RELOAD = setInterval(() => {
-    switch ($el_lT.textContent) {
-        case "disconnectedreload":
-            document.getElementById("gameName").textContent = "AutoReload: Start!"
-            window.onbeforeunload = null
-            setTimeout(() => clearInterval(RELOAD), 100)
-            window.location.reload()
-            break
-
-////////////////////////////////////////////////////////////////////////////////////////////Sound\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-////////////////////////////////////////////////////////////////////////////////////////////Place\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-    }
-}, 250)
-newDOM()
-const ALLOW_PACKET_INTERCEPT = true;
-
-const load_all_sounds = true;
-
-const link = "https://moosounds.justgamer101.repl.co/";
-
-const menuMusic = new Audio(`${link}menu_music.mp3`),
-snowWind = new Audio(`${link}in_snow.mp3`)
-
-var curses;
-
-fetch(`${link}curse_words.js`).then(resp => resp.text()).then(txt => curses = txt);
-
-if(curses instanceof String){
-    curses = JSON.parse(curses);
-}
-
-window.addEventListener("load", function(){
-    window.isLoaded = true;
-    if(menuMusic.isLoaded){
-        menuMusic.play();//only play when both sound and page are loaded
-    }
-});
-
-menuMusic.addEventListener("canplaythrough", function(){
-    menuMusic.isLoaded = true;
-    if(window.isLoaded){
-        menuMusic.play();//^
-    }
-});
-
-/**
- * Get the distance between 2 points that have the x and y attribute
- * @param {Object} pos1 begining position
- * @param {Object} pos2 secondary position
- * @returns distance between both points
- */
-
-Math.dist = function (pos1, pos2) {
-    var a = pos1.x - pos2.x;
-    var b = pos1.y - pos2.y;
-    return Math.sqrt(a * a + b * b);
-};
-
-const sound = {
-    atk: "axe_swing",
-    hitBush: "bush_hit1",
-    hitStone: "stone_hit",
-    eat: "eat",
-    musketFire: "musket_fire",
-    hitWood: "hit_wood",
-    place: "place"
-}
-
-var soundCache = [],
-    buildings = [],
-    players = [],
-    cachedSave = [];
-
-    var playerDat = {
-        health: 100,
-        id: null,
-        sid: null
-    }
-
-    var joinBtn = document.getElementById("enterGame");
-
-    joinBtn.addEventListener("click", function(e){
-       menuMusic.pause();//pause sound when clicked join button
-    });
-
-    if(load_all_sounds){
-            for(let i in sound){
-                playSound(sound[i]);//load all sounds
-            }
-    }
-
-//minimize the amount of times a player will download a sound
-function playSound(src, rep = 0){
-    const ind = `${src}${rep}`;
-    if(!soundCache[ind]){
-        soundCache[ind] = new Audio(`${link}${src}.mp3`);
-        soundCache[ind].isLoaded = false;
-        soundCache[ind].addEventListener("canplaythrough", function(){
-            soundCache[ind].isLoaded = true;
-            if(src !== sound.musketFire && src !== sound.place){
-                soundCache[ind].volume = 0.5;
-            }
-        });
-        cachedSave[src] = (rep + 1);
-        localStorage.cache_save = JSON.stringify(cachedSave);
-        console.log("constructing new audio", src, rep);
-    } else if(soundCache[ind].isLoaded){
-        if(soundCache[ind].currentTime == 0 || soundCache[ind].ended){
-            soundCache[ind].play();
-        } else playSound(src, rep + 1);
-    }
-}
-
-function cpc(sid){
-    if(!players[sid]) {
-        players[sid] = {
-            health: 100,
-            sid: sid
-        };
-    }
-}
-
-class ws2 extends WebSocket {
-    constructor(url, protocols) {
-        super(url, protocols);
-
-        if(ALLOW_PACKET_INTERCEPT){
-           this.staticSend = this.send;//using WebSocket.prototype.send.call is slow
-            this.send = function(m){
-                const data = msgpack.decode(new Uint8Array(m));
-
-                if(data[0] == "ch"){//curse filter bypass
-                    var msg = data[1][0];
-                    for(let i = 0; i < curses.length; i++){
-                        if(~msg.indexOf(curses[i])){
-                            msg.replaceAll(curses[i], curses[i].toUpperCase());
-                        }
-                    }
-                    console.log(data, msg)
-                    return this.staticSend(new Uint8Array(Array.from(msgpack.encode(["ch", [msg]]))));
-                } else this.staticSend(m);
-            }
-        }
-
-        this.addEventListener("message", function(m){
-            const data = msgpack.decode(new Uint8Array(m.data)),
-                  payload = data[1];
-
-            switch(data[0]){
-                case "7":
-                    playSound(sound.atk);
-                    break;
-
-                case "6":
-                    for (let i = 0; i < payload[0].length / 8; i++) {//keep track of builds to know what sound to play
-                        const binf = payload[0].slice(8 * i, 8 * i + 8);
-                        let thisBuild = {
-                            id: binf[0],
-                            x: binf[1],
-                            y: binf[2],
-                            dir: binf[3],
-                            scale: binf[4],
-                            type: binf[5],
-                            buildType: binf[6],
-                            ownerSid: binf[7]
-                        }
-                        buildings[thisBuild.id] = thisBuild;
-                      if(thisBuild.ownerSid == playerDat.sid) playSound(sound.place); //play sound if building placed by player
-                    }
-                    break;
-
-                case "8":
-                    var build = buildings[payload[1]],
-                    type = build.type,
-                    typeA = build.buildType;
-                    if(type == 0 || type == 1 || typeA == 14){//tree and food bush and sapp
-                        playSound(sound.hitBush);
-                    } else if(type == 2 || type == 3 || typeA == 13){//stone and gold and mine
-                        playSound(sound.hitStone);
-                    } else if(typeA == 3 || typeA == 6 || typeA == 7 || typeA == 8 || typeA == 10 || typeA == 11 || typeA == 12){//spike and wall and mill
-                        playSound(sound.hitWood);
-                    }
-                    break;
-
-                    case "11":
-                        snowWind.pause();
-                    players[playerDat.sid] = 100;
-                    setTimeout(function(){
-                        menuMusic.play();//play music on death
-                    }, 2000);
-                    break;
-
-                    case "h":
-                      //  console.log(payload)
-                        cpc(payload[0]);
-                        if (payload[1] > players[payload[0]].health) playSound(sound.eat);
-                        players[payload[0]].health = payload[1];
-                    break;
-
-                    case "1":
-                    playerDat.sid = payload[0];
-                    break;
-
-                    case "33":
-                        for (let i = 0; i < payload[0].length; i += 13) {
-                            const plinf = payload[0].slice(i, i + 13);
-                            var thisPlayer = {
-                                sid: plinf[0],
-                                x: plinf[1],
-                                y: plinf[2],
-                                dir: plinf[3],
-                                obj: plinf[4],
-                                wep: plinf[5],
-                                variant: plinf[6],
-                                tribe: plinf[7],
-                                isLeader: plinf[8],
-                                hat: plinf[9],
-                                acc: plinf[10],
-                                isSkull: plinf[11],
-                                zIndex: plinf[12],
-                                dist: null,
-                                isMe: plinf[0] == playerDat.sid
-                            },
-                            sid = thisPlayer.sid,
-                            temp = players[sid] || {};
-
-                          //  thisPlayer.dist = Math.dist(thisPlayer, temp);//distance from last update
-
-                          if(temp.x !== thisPlayer.x || temp.y !== thisPlayer.y){//moved
-                         //   playSound(sound.walk);
-                          }
-
-                            cpc(sid);
-
-                            for(let i in thisPlayer){
-                                players[sid][i] = thisPlayer[i];
-                            }
-
-                            if(players[sid].y <= 2400){//in snow
-                                players[sid].notInSnow = players[sid].inSnow;
-                                players[sid].inSnow = true;
-                                players[sid].wasInSnow = false;
-                            } else {
-                                players[sid].notInSnow = true;
-                                players[sid].wasInSnow = players[sid].inSnow;
-                                players[sid].inSnow = false;
-                            }
-
-                            if(thisPlayer.isMe){
-                                if(players[sid].inSnow){
-                                    if(players[sid].notInSnow || snowWind.currentTime == 0 || snowWind.ended) {
-                                        snowWind.play();
-                                    }
-                                    if(snowWind.volume < 1) snowWind.volume += 0.05;
-                                } else if(snowWind.currentTime !== 0 || snowWind.ended == false){
-                                    if(!snowWind.paused){
-                                    snowWind.volume -= 0.05;
-                                    if(snowWind.volume == 0){
-                                        snowWind.pause();
-                                    }
-                                }
-                                }
-                            }
-
-                        }
-                    break;
-
-                    case "18":
-                        //console.log(payload)
-                        if(payload[5] == 5){//musket bullet
-                            playSound(sound.musketFire);
-                        }
-                    break;
-            }
-        });
-    }
-}
-
-/*
- Apple = 0
-  WoodWall = 3
-  Spikes = 6
-  Windmill = 10
-    Cookie = 1
-  StoneWall = 4
-    PitTrap = 15
-  BoostPad = 16
-    GreaterSpikes = 7
-  FasterWindmill = 11
-  Mine = 13
-  Sapling = 14
-    Cheese = 2
-  Turret = 17
-  Platform = 18
-  HealingPad = 19
-  Blocker = 21
-  Teleporter = 22
-  CastleWall = 5
-  PowerMill = 12
-    PoisonSpikes = 8
-  SpinningSpikes = 9
-  SpawnPad = 20
-  */
-
-//picoseconds op
-
-WebSocket = ws2;
-
 //////////////////////////////////////////////////////////////////////////////////////Hud\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 ///////////////////////////////////////////////////////////////////////////////////////Place\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 
-var moomooVer = $('#linksContainer2 .menuLink').html(),
-    hideSelectors = ['#mobileDownloadButtonContainer',
-                     '#followText',
-                     '#smallLinks',
-                     '#linksContainer1',
-                     '#twitterFollow',
-                     '#youtubeFollow',
-                     '#cdm-zone-02',
-                     '#youtuberOf',
-                     '#downloadButtonContainer',
-                     '#promoImg',
-                     '.menuHeader',
-                     '.menuLink',
-                     '.menuHeader:nth-child(5)',
-                     '.menuHeader:nth-child(6)',
-                     '.menuText',
-                     '#adCard',
-                     '#promoImgHolder',
-                     ],
+// ==UserScript==
+// @name         BlowMod
+// @namespace    None.
+// @version      3.0
+// @description  I'm trying to make dis. xd
+// @author       ItzF1ker1
+// @match        http://moomoo.io/*
+// @match        https://moomoo.io/*
+// @match        *://*.moomoo.io/*
+// @grant        None.
+// @icon         http://u.cubeupload.com/FikriXGamer/Crown.png
+// ==/UserScript==
 
-    css = '#rightCardHolder {display: block!important}',
-    head = document.head || document.getElementsByTagName('head')[0],
-    style = document.createElement('style');
-
-style.type = 'text/css';
-if (style.styleSheet){
-    style.styleSheet.cssText = css;
-} else {
-    style.appendChild(document.createTextNode(css));
-}
-
-for ( let i = 0; i < hideSelectors.length; i++ ) {
-    $(hideSelectors[i]).hide();
-}
-
-head.appendChild(style);
-$('#linksContainer2').html('<a href="./docs/versions.txt" target="_blank" class="menuLink">' + moomooVer + '</a>');
-
-// document.getElementById('promoImgHolder').innerHTML = '</iframe><iframe width="420px" height="236.25px" src="https://www.youtube-nocookie.com/embed/GPATUFiWoTI" frameborder="0" allowfullscreen></iframe>';
-// document.getElementById('adCard').innerHTML = '<iframe width="420px" height="236.25px" src="https://www.youtube-nocookie.com/embed/D3_2AIOEnZQ" frameborder="0" allowfullscreen></iframe>';
-// document.getElementById('downloadButtonContainer').innerHTML = '</iframe><iframe width="420px" height="236.25px" src="http://icecast3.play.cz/evropa2-128.mp3"></iframe>';
-
-// document.getElementById("gameUI").style.backgroundImage = "url('')";
-// document.getElementById("mainMenu").style.backgroundImage = "url('')";
-document.getElementById('enterGame').innerHTML = '? BlowTime ?';
-document.getElementById('loadingText').innerHTML = 'Loading...';
-document.getElementById('nameInput').placeholder = "Name?";
-document.getElementById('chatBox').placeholder = "Chat";
-document.getElementById('diedText').innerHTML = '! Not Now! !';
-document.getElementById('gameName').innerHTML = 'BlowMod';
-
-$('.menuCard').css({'white-space': 'normal',
-                    'text-align': 'center',
-                    'background-color': 'rgba(0, 0, 0, 0.74)',
-                    '-moz-box-shadow': '0px 0px rgba(255, 255, 255, 0)',
-                    '-webkit-box-shadow': '0px 0px rgba(255, 255, 255, 0)',
-                    'box-shadow': '0px 0px rgba(255, 255, 255, 0)',
-                    '-webkit-border-radius': '0px',
-                    '-moz-border-radius': '0px',
-                    'border-radius': '0px',
-                    'margin': '15px',
-                    'margin-top': '15px'});
-
-$('#menuContainer').css({'white-space': 'normal'});
-
-$('#nativeResolution').css({'cursor': 'pointer'});
-
-$('#playMusic').css({'cursor': 'pointer'});
-
-$('#guideCard').css({'overflow-y': 'hidden',
-                     'margin-top': 'auto',
-                     'margin-bottom': '30px'});
-
-$('#serverSelect').css({'margin-bottom': '30.75px'});
-
-$('#skinColorHolder').css({'margin-bottom': '30.75px'});
-
-$('.settingRadio').css({'margin-bottom': '30.75px'});
-
-$('#partyButton').css({'right': '70%',
-                       'left': '10%',
-                       'text-align': 'center',
-                       'bottom': '48px',
-                       'font-size': '24px',
-                       'top': 'unset'});
-
-$('#joinPartyButton').css({'right': '10%',
-                           'left': '70%',
-                           'text-align': 'center',
-                           'bottom': '48px',
-                           'font-size': '24px',
-                           'top': 'unset'});
-
-$('#linksContainer2').css({'-webkit-border-radius': '0px 0 0 0',
-                           '-moz-border-radius': '0px 0 0 0',
-                           'border-radius': '0px 0 0 0',
-                           'right': '44%',
-                           'left': '44%',
-                           'background-color': 'rgba(0, 0, 0, 0.74)',
-                           'text-align': 'center',
-                           'bottom': '12px'});
-
-$('#gameName').css({'color': '#21F0FF',
-                    'text-shadow': '0 1px 0 rgba(255, 255, 255, 0), 0 2px 0 rgba(255, 255, 255, 0), 0 3px 0 rgba(255, 255, 255, 0), 0 4px 0 rgba(255, 255, 255, 0), 0 5px 0 rgba(255, 255, 255, 0), 0 6px 0 rgba(255, 255, 255, 0), 0 7px 0 rgba(255, 255, 255, 0), 0 8px 0 rgba(255, 255, 255, 0), 0 9px 0 rgba(255, 255, 255, 0)',
-                    'text-align': 'center',
-                    'font-size': '156px',
-                    'margin-bottom': '-30px'});
-
-$('#loadingText').css({'color': '#21F0FF',
-                       'background-color': 'rgba(0, 0, 0, 0.74)',
-                       'padding': '8px',
-                       'right': '150%',
-                       'left': '150%',
-                       'margin-top': '40px'});
-
-$('.ytLink').css({'color': '#144db4',
-                  'padding': '8px',
-                  'background-color': 'rgba(0, 0, 0, 0.74)'});
-
-$('.menuLink').css({'color': '#144db4'});
-
-$('#nameInput').css({'border-radius': '0px',
-                     '-moz-border-radius': '0px',
-                     '-webkit-border-radius': '0px',
-                     'border': 'hidden'});
-
-$('#serverSelect').css({'cursor': 'pointer',
-                        'color': '#21F0FF',
-                        'background-color': '#808080',
-                        'border': 'hidden',
-                        'font-size': '20px'});
-
-$('.menuButton').css({'border-radius': '0px',
-                      '-moz-border-radius': '0px',
-                      '-webkit-border-radius': '0px'});
-
-$('#promoImgHolder').css({'position': 'absolute',
-                          'bottom': '-7%',
-                          'left': '20px',
-                          'width': '420px',
-                          'height': '236.25px',
-                          'padding-bottom': '18px',
-                          'margin-top': '0px'});
-
-$('#adCard').css({'position': 'absolute',
-                  'bottom': '-7%',
-                  'right': '20px',
-                  'width': '420px',
-                  'height': '236.25px',
-                  'padding-bottom': '18px'});
-
-$('#mapDisplay').css({'-webkit-border-radius': '0px',
-                      '-moz-border-radius': '0px',
-                      'border-radius': '0px'});
-
-$('.menuHeader').css({'color': 'rgba(255, 255, 255, 1)'});
-
-$('#killCounter').css({'color': '#ededed'});
-
+(function() {
+    'use strict';
+document.getElementById("gameName").innerHTML = "BlowMod";
+$('#leaderboard').append(' By:T_T');
+document.getElementById("diedText").innerHTML = "GIT GUD"
 $('#diedText').css({'background-color': 'rgba(0, 0, 0, 0.74)'});
+document.getElementById('enterGame').innerHTML = 'BlowTime';
+document.getElementById('loadingText').innerHTML = 'DontDie!';
 
-$('#gameCanvas').css({'background-color': '#f4f4f4'});
+document.getElementById("pingDisplay").style.color = "#000000";
+const pingDisplay = $("#pingDisplay");
+pingDisplay.css("top", "8px");
+pingDisplay.css("display", "block");
 
-$('#allianceButton').css({'color': 'rgba(0, 0, 0, 1)'});
+$("body").append(pingDisplay);
 
-$('#storeButton').css({'color': 'rgba(0, 0, 0, 1)'});
+(function() {
+  var UPDATE_DELAY = 200;
 
-$('#chatButton').css({'color': 'rgba(0, 0, 0, 1)'});
+  var lastUpdate = 0;
+  var frames = 0;
 
-$('.gameButton').css({'-webkit-border-radius': '0px 0 0 0',
-                      '-moz-border-radius': '0px 0 0 0',
-                      'border-radius': '0px 0 0 0',
-                      'background-color': 'rgba(0, 0, 0, 0.4)'});
+  var displayElement = document.createElement("div");
+  displayElement.style.padding = "5px";
+  displayElement.style.font = "16px Hammersmith One";
+  displayElement.style.display = "block";
+  displayElement.style.position = "fixed";
+  displayElement.style.top = "0px";
+  displayElement.style.left = "0px";
+  displayElement.textContent = "Calculating...";
+  document.body.appendChild(displayElement);
 
-$('.uiElement, .resourceDisplay').css({'-webkit-border-radius': '0px',
-                                       '-moz-border-radius': '0px',
-                                       'border-radius': '0px',
-                                       'background-color': 'rgba(0, 0, 0, 0.4)'});
+  function cssColorToRGB(color) {
+    var values;
 
-$('#chatBox').css({'-webkit-border-radius': '0px',
-                   '-moz-border-radius': '0px',
-                   'border-radius': '0px',
-                   'background-color': 'rgba(0, 0, 0, 0.4)',
-                   'text-align': 'center'});
+    if (color.startsWith("rgba")) {
+      values = color.substring(5, color.length - 1).split(",");
+    } else if (color.startsWith("rgb")) {
+      values = color.substring(4, color.length - 1).split(",");
+    } else if (color.startsWith("#") && color.length === 4) {
+      values = [];
+      values[0] = "" + parseInt("0x" + color.substr(1, 1));
+      values[1] = "" + parseInt("0x" + color.substr(2, 1));
+      values[2] = "" + parseInt("0x" + color.substr(3, 1));
+    } else if (color.startsWith("#") && color.length === 7) {
+      values = [];
+      values[0] = "" + parseInt("0x" + color.substr(1, 2));
+      values[1] = "" + parseInt("0x" + color.substr(3, 2));
+      values[2] = "" + parseInt("0x" + color.substr(5, 2));
+    } else {
+      return {r : 255, g : 255, b : 255};
+    }
 
-$('#foodDisplay').css({'color': '#ae4d54'});
+    return {
+      r : Number(values[0]),
+      g : Number(values[1]),
+      b : Number(values[2])
+    };
+  }
 
-$('#woodDisplay').css({'color': '#758f58'});
+  function getInvertedRGB(values) {
+    return "rgb(" + (255 - values.r) + "," + (9 - values.g) + ","
+      + (9 - values.b) + ")";
+  }
 
-$('#stoneDisplay').css({'color': '#818198'});
+  function getOpaqueRGB(values) {
+    return "rgba(" + values.r + "," + values.g + "," + values.b + ",0.7)";
+  }
 
-$('#scoreDisplay').css({'color': '#c2b17a'});
+  function updateCounter() {
+    var bgColor = getComputedStyle(document.body, null).getPropertyValue(
+      "background-color");
+    var bgColorValues = cssColorToRGB(bgColor);
+    var textColor = getInvertedRGB(bgColorValues);
+    var displayBg = getOpaqueRGB(bgColorValues);
+    displayElement.style.color = textColor;
+    displayElement.style.background = displayBg;
 
-$('#leaderboard').css({'-webkit-border-radius': '0px',
-                       '-moz-border-radius': '0px',
-                       'border-radius': '0px',
-                       'background-color': 'rgba(33, 240, 255, 0.4)',
-                       'text-align': 'center'});
+    var now = Date.now();
+    var elapsed = now - lastUpdate;
+    if (elapsed < UPDATE_DELAY) {
+      ++frames;
+    } else {
+      var fps = Math.round(frames / (elapsed / 1000));
+      displayElement.textContent = fps + " FPS";
+      frames = 0;
+      lastUpdate = now;
+    }
 
-$('#ageText').css({'color': '#000'});
+    requestAnimationFrame(updateCounter);
+  }
 
+  lastUpdate = Date.now();
+  requestAnimationFrame(updateCounter);
+})();
+
+document.getElementById("scoreDisplay").style.color = "#C2B17A";
+document.getElementById("woodDisplay").style.color = "#758F58";
+document.getElementById("stoneDisplay").style.color = "#818198";
+document.getElementById("killCounter").style.color = "#B90000";
+document.getElementById("foodDisplay").style.color = "#AE4D54";
+document.getElementById("allianceButton").style.color = "#00F4FF";
+document.getElementById("chatButton").style.color = "#FFFFFF";
+document.getElementById("storeButton").style.color = "#FF7300";
+document.getElementById("ageText").style.color = "#3DFF00";
+
+document.title="BlowMod"
+setInterval(() => {
+setTimeout( () => {
+document.title="!lowMod"
+setTimeout( () => {
+document.title="B!owMod"
+setTimeout( () => {
+document.title="Blo!Mod"
+setTimeout( () => {
+document.title="Blo!Mod"
+setTimeout( () => {
+document.title="Blow!od"
+setTimeout( () => {
+document.title="BlowM!d"
+setTimeout( () => {
+document.title="BlowMo!"
+setTimeout( () => {
+}, 580);
+}, 580);
+}, 580);
+}, 580);
+}, 580);
+}, 580);
+}, 580);
+}, 580);}
+ , 2000);
+
+document.getElementById('nameInput').placeholder = "Your Cringe Name";
+$("#mapDisplay").css("background", "url('https://wormax.org/chrome3kafa/moomooio-background.png')");
 $('#ageBar').css({'-webkit-border-radius': '0px',
                   '-moz-border-radius': '0px',
-                  'border-radius': '0px',
+                  'border-radius': '50px',
                   'background-color': 'rgba(0, 0, 0, 0.4)'});
 
 $('#ageBarBody').css({'-webkit-border-radius': '0px',
                       '-moz-border-radius': '0px',
-                      'border-radius': '0px',
-                      'background-color': '#21F0FF'});
-
+                      'border-radius': '50px',
+                      'background-color': '#3DFF00'});
+$('#leaderboard').css({'-webkit-border-radius': '0px',
+                       '-moz-border-radius': '0px',
+                       'border-radius': '50px',
+                       'background-color': 'rgba(0, 0, 0, 0.4)',
+                       'text-align': 'center'});
 $('.storeTab').css({'-webkit-border-radius': '0px',
                     '-moz-border-radius': '0px',
-                    'border-radius': '0px',
+                    'border-radius': '30px',
                     'background-color': 'rgba(0, 0, 0, 0.4)'});
-
 $('#storeHolder').css({'-webkit-border-radius': '0px',
                        '-moz-border-radius': '0px',
                        'border-radius': '0px',
                        'background-color': 'rgba(0, 0, 0, 0.4)'});
-
 $('#allianceHolder').css({'-webkit-border-radius': '0px',
                           '-moz-border-radius': '0px',
-                          'border-radius': '0px',
+                          'border-radius': '30px',
                           'background-color': 'rgba(0, 0, 0, 0.4)'});
-
 $('.actionBarItem').css({'-webkit-border-radius': '0px',
-                         'border-radius': '0px',
+                         'border-radius': '30px',
                          'background-color': 'rgba(0, 0, 0, 0.4)'});
-
-
-var myElement = document.querySelector('#nameInput');
-myElement.style.backgroundColor = "#808080";
-myElement.style.color = "#21F0FF";
-
-var myElement = document.querySelector('#enterGame');
-myElement.style.backgroundColor = "#21F0FF";
-myElement.style.color = "#808080";
-
-let hue = 0;
-
-let replaceInterval = setInterval(() => {
-if (CanvasRenderingContext2D.prototype.roundRect) {
-  CanvasRenderingContext2D.prototype.roundRect = ((oldFunc) => function() { if (this.fillStyle == "#8ecc51") this.fillStyle = `hsl(${hue}, 100%, 50%)`; return oldFunc.call(this, ...arguments); })(CanvasRenderingContext2D.prototype.roundRect);
-  clearInterval(replaceInterval);
-}}, 10);
-
-function changeHue() {
-  hue += Math.random() * 3;
-}
-
-setInterval(changeHue, 10);
+$('#chatBox').css({'-webkit-border-radius': '0px',
+                   '-moz-border-radius': '0px',
+                   'border-radius': '30px',
+                   'background-color': 'rgba(0, 0, 0, 0.4)',
+                   'text-align': 'center'});
+$('.uiElement, .resourceDisplay').css({'-webkit-border-radius': '0px',
+                                       '-moz-border-radius': '0px',
+                                       'border-radius': '20px',
+                                       'background-color': 'rgba(0, 0, 0, 0.4)'});
+$('#menuContainer').css({'white-space': 'normal'});
+$('#nativeResolution').css({'cursor': 'pointer'});
+$('#guideCard').css({'margin-top': 'auto',
+                     'margin-bottom': '30px'});
+$('#serverSelect').css({'margin-bottom': '30.75px'});
+$('#skinColorHolder').css({'margin-bottom': '30.75px'});
+$('#gameName').css({'text-shadow': '0 1px 0 rgba(255, 255, 255, 0), 0 2px 0 rgba(255, 255, 255, 0), 0 3px 0 rgba(255, 255, 255, 0), 0 4px 0 rgba(255, 255, 255, 0), 0 5px 0 rgba(255, 255, 255, 0), 0 6px 0 rgba(255, 255, 255, 0), 0 7px 0 rgba(255, 255, 255, 0), 0 8px 0 rgba(255, 255, 255, 0), 0 9px 0 rgba(255, 255, 255, 0)',
+                    'text-align': 'center',
+                    'font-size': '156px',
+                    'margin-bottom': '-30px'});
+$('#loadingText').css({'padding': '8px',
+                       'right': '150%',
+                       'left': '150%',
+                       'margin-top': '40px'});
+$('.ytLink').css({'color': '#144db4',
+                  'padding': '8px',});
+$('#nameInput').css({'border-radius': '0px',
+                     '-moz-border-radius': '0px',
+                     '-webkit-border-radius': '0px',
+                     'border': 'hidden'});
+$('#serverSelect').css({'cursor': 'pointer',
+                        'border': 'hidden',
+                        'font-size': '20px'});
+$('.menuButton').css({'border-radius': '50px',
+                      '-moz-border-radius': '0px',
+                      '-webkit-border-radius': '0px'});
+})();
 
 alert('Youre Welcome')
