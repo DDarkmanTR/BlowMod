@@ -2990,9 +2990,9 @@ function newDOM() {
     'use strict';
 document.getElementById("gameName").innerHTML = "BlowMod";
 $('#leaderboard').append(' By:T_T');
-document.getElementById("diedText").innerHTML = "GIT GUD"
+document.getElementById("diedText").innerHTML = "!NotNow!"
 $('#diedText').css({'background-color': 'rgba(0, 0, 0, 0.74)'});
-document.getElementById('enterGame').innerHTML = 'BlowTime';
+document.getElementById('enterGame').innerHTML = '?BlowTime?';
 document.getElementById('loadingText').innerHTML = 'DontDie!';
 
 document.getElementById("pingDisplay").style.color = "#000000";
@@ -3185,6 +3185,15 @@ $('#serverSelect').css({'cursor': 'pointer',
 $('.menuButton').css({'border-radius': '50px',
                       '-moz-border-radius': '0px',
                       '-webkit-border-radius': '0px'});
+})();
+
+(function() {
+    document.addEventListener('keydown', function(e) {
+        switch (e.keyCode) {
+            case 16: storeEquip(0); break; // Shift
+        }
+    });
+
 })();
 
 alert('Youre Welcome')
