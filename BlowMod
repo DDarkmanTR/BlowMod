@@ -3517,3 +3517,66 @@ function changeHue() {
 }
 
 setInterval(changeHue, 10);
+
+// ==UserScript==
+// @name         CPS Viewer
+// @namespace    -
+// @version      1.0
+// @description  -
+// @author       CyRuler#3691
+// @icon         https://i.imgur.com/FzF1mWA.png
+// @match          *://moomoo.io/*
+// @match          *://dev.moomoo.io/*
+// @match          *://*sandbox.moomoo.io/*
+// @grant        none
+// ==/UserScript==
+
+var cps = 0;
+var iCliked = 1;
+$("#gameCanvas").mousedown(function(e){
+            if(e.which == 1 && iCliked == 1)
+                {
+                    cps = (cps + 1)
+setTimeout( () => {
+    cps = (cps - 1)
+}, 950);
+                }
+        });
+$("#gameCanvas").mousedown(function(e){
+            if(e.which == 3 && iCliked == 1)
+                {
+                    cps = (cps + 1)
+                    setTimeout( () => {
+    cps = (cps - 1)
+}, 950);
+                }
+        });
+document.addEventListener("mousedown", buttonPress, false);
+function buttonPress(e) {
+    if(e.button==1 && iCliked == 1)
+    {
+cps = (cps + 1)
+        setTimeout( () => {
+    cps = (cps - 1)
+}, 950);
+        }
+            }
+
+    document.addEventListener('keydown', function (e) {
+        if(e.keyCode == 16){
+               SendKeys.Send("{F3}");
+        }
+        });
+  var CpsMenu = document.createElement("div");
+  CpsMenu.style.padding = "30px";
+CpsMenu.id = "CpsDiv";
+  CpsMenu.style.font = "30px Arial";
+  CpsMenu.style.display = "block";
+  CpsMenu.style.position = "fixed";
+  CpsMenu.style.top = "3%";
+  CpsMenu.style.left = "0%";
+CpsMenu.textContent = "Loading";
+  document.body.appendChild(CpsMenu);
+setInterval(()=>{
+CpsMenu.textContent = "Cps:"+cps;
+}, 0);
