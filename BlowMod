@@ -3187,13 +3187,4 @@ $('.menuButton').css({'border-radius': '50px',
                       '-webkit-border-radius': '0px'});
 })();
 
-(function() {
-    document.addEventListener('keydown', function(e) {
-        switch (e.keyCode) {
-            case 16: storeEquip(0); break; // Shift
-        }
-    });
-
-})();
-
 alert('Youre Welcome')
