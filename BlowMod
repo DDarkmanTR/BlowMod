@@ -9968,9 +9968,9 @@ if(window.location.href.includes('moomoo.io')){
                placeOffset: -5
            }, {
                group: e.exports.groups[14],
-               name: "bait",
-               desc: "baits nearby animals for a few seconds and gives them 10 health",
-               req: ["food", 15],
+               name: "explanation",
+               desc: "hey do you like this mod i hope you like it",
+               req: ["enjoy it"],
                health: 500,
                scale: 27,
                holdOffset: -5,
