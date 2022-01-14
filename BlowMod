@@ -9954,9 +9954,29 @@ if(window.location.href.includes('moomoo.io')){
                holdOffset: 20,
                placeOffset: -5
            }, {
-
-                function(t, n) {
-
+               age: 7,
+               group: e.exports.groups[13],
+               name: "teleporter",
+               desc: "teleports you to a random point on the map",
+               req: ["wood", 60, "stone", 60],
+               ignoreCollision: !0,
+               teleport: !0,
+               health: 200,
+               colDiv: .7,
+               scale: 45,
+               holdOffset: 20,
+               placeOffset: -5
+           }, {
+               group: e.exports.groups[14],
+               name: "bait",
+               desc: "baits nearby animals for a few seconds and gives them 10 health",
+               req: ["food", 15],
+               health: 500,
+               scale: 27,
+               holdOffset: -5,
+               consume: function(t, n) {
+                   return n.add(n.objects.length, t.x, t.y, t.dir, this.scale || 26, 1, e.exports.list[23], !0, t, !0),
+                       !0
                }
            }];
        for (var n = 0; n < e.exports.list.length; ++n)
