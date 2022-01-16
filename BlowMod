@@ -3,6 +3,8 @@
 // @namespace    none
 // @version      ???
 // @author       T_T
+// @match        *://dev.moomoo/*
+// @match        *://sandbox.moomoo.io/*
 // @match        *://moomoo.io/*
 // @require      https://greasyfork.org/scripts/423602-msgpack/code/msgpack.js
 // @icon         http://moomoo.io/img/hats/hat_15.png
@@ -2693,9 +2695,42 @@ document.addEventListener('keydown', e => {
             document.getElementById("AntiInsta").checked = false
             document.getElementById("AntiInstaOld").checked = false
         }
+
+    }
+    if (e.code == "KeyZ") {
+        send.Packet('ch', "Hi")
+    
+    }
+    if (e.code == "KeyS") {
+        send.Packet('ch', "v")
+
+    }
+    if (e.code == "KeyD") {
+        send.Packet('ch', ">")
+
+    }
+    if (e.code == "KeyA") {
+        send.Packet('ch', "<")
+
+    }
+    if (e.code == "KeyW") {
+        send.Packet('ch', "^")
+
+    }
+    if (e.code == "KeyQ") {
+        send.Packet('ch', "Heal")
+
+    }
+    if (e.code == "KeyK") {
+        send.Packet('ch', "create Face'S")
+
+    }
+    if (e.code == "KeyL") {
+        send.Packet('ch', "clear")
+
     }
     if (e.code == "KeyP") {
-        send.Packet('ch', "Object: " + ObjectB)
+        send.Packet('ch', "leave")
     }
     if (e.code == $("#BindAntiTrap").val()) {
         if (document.getElementById("AntiTrap").checked == false) {
