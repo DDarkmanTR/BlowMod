@@ -12,7 +12,6 @@
 // ==/UserScript==
 // Script in greasyfork: https://greasyfork.org/ru/scripts/431370-BlowMod-v6-new-menu-and-more
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Menu toggler...
 let keyMenu = "27"
@@ -3008,237 +3007,249 @@ function newDOM() {
     $("#gameName").css("display", "none")
 }
 
-//////////////////////////////////////////////////////////////////////////////////////Hud\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-///////////////////////////////////////////////////////////////////////////////////////Place\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
+var moomooVer = $('#linksContainer2 .menuLink').html(),
+    hideSelectors = ['#mobileDownloadButtonContainer',
+                     '#followText',
+                     '#smallLinks',
+                     '#linksContainer1',
+                     '#twitterFollow',
+                     '#youtubeFollow',
+                     '#cdm-zone-02',
+                     '#youtuberOf',
+                     '#downloadButtonContainer',
+                     '#promoImg',
+                     '.menuHeader',
+                     '.menuLink',
+                     '.menuHeader:nth-child(5)',
+                     '.menuHeader:nth-child(6)',
+                     '.menuText',
+                     '#adCard',
+                     '#promoImgHolder',
+                     ],
 
-// ==UserScript==
-// @name         BlowMod
-// @namespace    None.
-// @version      3.0
-// @description  I'm trying to make dis. xd
-// @author       ItzF1ker1
-// @match        http://moomoo.io/*
-// @match        https://moomoo.io/*
-// @match        *://*.moomoo.io/*
-// @grant        None.
-// @icon         http://u.cubeupload.com/FikriXGamer/Crown.png
-// ==/UserScript==
+    css = '#rightCardHolder {display: block!important}',
+    head = document.head || document.getElementsByTagName('head')[0],
+    style = document.createElement('style');
 
-(function() {
-    'use strict';
-document.getElementById("gameName").innerHTML = "BlowMod";
-$('#leaderboard').append(' By:T_T');
-document.getElementById("diedText").innerHTML = "!NotNow!"
-$('#diedText').css({'background-color': 'rgba(0, 0, 0, 0.74)'});
-document.getElementById('enterGame').innerHTML = '?BlowTime?';
-document.getElementById('loadingText').innerHTML = 'DontDie!';
+style.type = 'text/css';
+if (style.styleSheet){
+    style.styleSheet.cssText = css;
+} else {
+    style.appendChild(document.createTextNode(css));
+}
 
-document.getElementById("pingDisplay").style.color = "#000000";
-const pingDisplay = $("#pingDisplay");
-pingDisplay.css("top", "8px");
-pingDisplay.css("display", "block");
+for ( let i = 0; i < hideSelectors.length; i++ ) {
+    $(hideSelectors[i]).hide();
+}
 
-$("body").append(pingDisplay);
+head.appendChild(style);
+$('#linksContainer2').html('<a href="./docs/versions.txt" target="_blank" class="menuLink">' + moomooVer + '</a>');
 
-(function() {
-  var UPDATE_DELAY = 200;
+// document.getElementById('promoImgHolder').innerHTML = '</iframe><iframe width="420px" height="236.25px" src="https://www.youtube-nocookie.com/embed/GPATUFiWoTI" frameborder="0" allowfullscreen></iframe>';
+// document.getElementById('adCard').innerHTML = '<iframe width="420px" height="236.25px" src="https://www.youtube-nocookie.com/embed/D3_2AIOEnZQ" frameborder="0" allowfullscreen></iframe>';
+// document.getElementById('downloadButtonContainer').innerHTML = '</iframe><iframe width="420px" height="236.25px" src="http://icecast3.play.cz/evropa2-128.mp3"></iframe>';
 
-  var lastUpdate = 0;
-  var frames = 0;
+// document.getElementById("gameUI").style.backgroundImage = "url('')";
+// document.getElementById("mainMenu").style.backgroundImage = "url('')";
+document.getElementById('enterGame').innerHTML = '? Blow ?';
+document.getElementById('loadingText').innerHTML = 'Loading...';
+document.getElementById('nameInput').placeholder = "Name";
+document.getElementById('chatBox').placeholder = "Chat";
+document.getElementById('gameName').innerHTML = 'BlowMod';
 
-  var displayElement = document.createElement("div");
-  displayElement.style.padding = "5px";
-  displayElement.style.font = "16px Hammersmith One";
-  displayElement.style.display = "block";
-  displayElement.style.position = "fixed";
-  displayElement.style.top = "0px";
-  displayElement.style.left = "0px";
-  displayElement.textContent = "Calculating...";
-  document.body.appendChild(displayElement);
-
-  function cssColorToRGB(color) {
-    var values;
-
-    if (color.startsWith("rgba")) {
-      values = color.substring(5, color.length - 1).split(",");
-    } else if (color.startsWith("rgb")) {
-      values = color.substring(4, color.length - 1).split(",");
-    } else if (color.startsWith("#") && color.length === 4) {
-      values = [];
-      values[0] = "" + parseInt("0x" + color.substr(1, 1));
-      values[1] = "" + parseInt("0x" + color.substr(2, 1));
-      values[2] = "" + parseInt("0x" + color.substr(3, 1));
-    } else if (color.startsWith("#") && color.length === 7) {
-      values = [];
-      values[0] = "" + parseInt("0x" + color.substr(1, 2));
-      values[1] = "" + parseInt("0x" + color.substr(3, 2));
-      values[2] = "" + parseInt("0x" + color.substr(5, 2));
-    } else {
-      return {r : 255, g : 255, b : 255};
-    }
-
-    return {
-      r : Number(values[0]),
-      g : Number(values[1]),
-      b : Number(values[2])
-    };
-  }
-
-  function getInvertedRGB(values) {
-    return "rgb(" + (255 - values.r) + "," + (9 - values.g) + ","
-      + (9 - values.b) + ")";
-  }
-
-  function getOpaqueRGB(values) {
-    return "rgba(" + values.r + "," + values.g + "," + values.b + ",0.7)";
-  }
-
-  function updateCounter() {
-    var bgColor = getComputedStyle(document.body, null).getPropertyValue(
-      "background-color");
-    var bgColorValues = cssColorToRGB(bgColor);
-    var textColor = getInvertedRGB(bgColorValues);
-    var displayBg = getOpaqueRGB(bgColorValues);
-    displayElement.style.color = textColor;
-    displayElement.style.background = displayBg;
-
-    var now = Date.now();
-    var elapsed = now - lastUpdate;
-    if (elapsed < UPDATE_DELAY) {
-      ++frames;
-    } else {
-      var fps = Math.round(frames / (elapsed / 1000));
-      displayElement.textContent = fps + " FPS";
-      frames = 0;
-      lastUpdate = now;
-    }
-
-    requestAnimationFrame(updateCounter);
-  }
-
-  lastUpdate = Date.now();
-  requestAnimationFrame(updateCounter);
-})();
-
-document.getElementById("scoreDisplay").style.color = "#C2B17A";
-document.getElementById("woodDisplay").style.color = "#758F58";
-document.getElementById("stoneDisplay").style.color = "#818198";
-document.getElementById("killCounter").style.color = "#B90000";
-document.getElementById("foodDisplay").style.color = "#AE4D54";
-document.getElementById("allianceButton").style.color = "#00F4FF";
-document.getElementById("chatButton").style.color = "#FFFFFF";
-document.getElementById("storeButton").style.color = "#FF7300";
-document.getElementById("ageText").style.color = "#3DFF00";
-
-document.title="BlowMod"
-setInterval(() => {
-setTimeout( () => {
-document.title="!lowMod"
-setTimeout( () => {
-document.title="B!owMod"
-setTimeout( () => {
-document.title="Blo!Mod"
-setTimeout( () => {
-document.title="Blo!Mod"
-setTimeout( () => {
-document.title="Blow!od"
-setTimeout( () => {
-document.title="BlowM!d"
-setTimeout( () => {
-document.title="BlowMo!"
-setTimeout( () => {
-}, 580);
-}, 580);
-}, 580);
-}, 580);
-}, 580);
-}, 580);
-}, 580);
-}, 580);}
- , 2000);
-
-document.getElementById('nameInput').placeholder = "Your Cringe Name";
-$("#mapDisplay").css("background", "url('https://wormax.org/chrome3kafa/moomooio-background.png')");
-$('#ageBar').css({'-webkit-border-radius': '0px',
-                  '-moz-border-radius': '0px',
-                  'border-radius': '50px',
-                  'background-color': 'rgba(0, 0, 0, 0.4)'});
-
-$('#ageBarBody').css({'-webkit-border-radius': '0px',
-                      '-moz-border-radius': '0px',
-                      'border-radius': '50px',
-                      'background-color': '#3DFF00'});
-$('#leaderboard').css({'-webkit-border-radius': '0px',
-                       '-moz-border-radius': '0px',
-                       'border-radius': '50px',
-                       'background-color': 'rgba(0, 0, 0, 0.4)',
-                       'text-align': 'center'});
-$('.storeTab').css({'-webkit-border-radius': '0px',
+$('.menuCard').css({'white-space': 'normal',
+                    'text-align': 'center',
+                    'background-color': 'rgba(0, 0, 0, 0.74)',
+                    '-moz-box-shadow': '0px 0px rgba(255, 255, 255, 0)',
+                    '-webkit-box-shadow': '0px 0px rgba(255, 255, 255, 0)',
+                    'box-shadow': '0px 0px rgba(255, 255, 255, 0)',
+                    '-webkit-border-radius': '0px',
                     '-moz-border-radius': '0px',
-                    'border-radius': '30px',
-                    'background-color': 'rgba(0, 0, 0, 0.4)'});
-$('#storeHolder').css({'-webkit-border-radius': '0px',
-                       '-moz-border-radius': '0px',
-                       'border-radius': '0px',
-                       'background-color': 'rgba(0, 0, 0, 0.4)'});
-$('#allianceHolder').css({'-webkit-border-radius': '0px',
-                          '-moz-border-radius': '0px',
-                          'border-radius': '30px',
-                          'background-color': 'rgba(0, 0, 0, 0.4)'});
-$('.actionBarItem').css({'-webkit-border-radius': '0px',
-                         'border-radius': '30px',
-                         'background-color': 'rgba(0, 0, 0, 0.4)'});
-$('#chatBox').css({'-webkit-border-radius': '0px',
-                   '-moz-border-radius': '0px',
-                   'border-radius': '30px',
-                   'background-color': 'rgba(0, 0, 0, 0.4)',
-                   'text-align': 'center'});
-$('.uiElement, .resourceDisplay').css({'-webkit-border-radius': '0px',
-                                       '-moz-border-radius': '0px',
-                                       'border-radius': '20px',
-                                       'background-color': 'rgba(0, 0, 0, 0.4)'});
+                    'border-radius': '0px',
+                    'margin': '15px',
+                    'margin-top': '15px'});
+
 $('#menuContainer').css({'white-space': 'normal'});
+
 $('#nativeResolution').css({'cursor': 'pointer'});
-$('#guideCard').css({'margin-top': 'auto',
+
+$('#playMusic').css({'cursor': 'pointer'});
+
+$('#guideCard').css({'overflow-y': 'hidden',
+                     'margin-top': 'auto',
                      'margin-bottom': '30px'});
+
 $('#serverSelect').css({'margin-bottom': '30.75px'});
+
 $('#skinColorHolder').css({'margin-bottom': '30.75px'});
-$('#gameName').css({'text-shadow': '0 1px 0 rgba(255, 255, 255, 0), 0 2px 0 rgba(255, 255, 255, 0), 0 3px 0 rgba(255, 255, 255, 0), 0 4px 0 rgba(255, 255, 255, 0), 0 5px 0 rgba(255, 255, 255, 0), 0 6px 0 rgba(255, 255, 255, 0), 0 7px 0 rgba(255, 255, 255, 0), 0 8px 0 rgba(255, 255, 255, 0), 0 9px 0 rgba(255, 255, 255, 0)',
+
+$('.settingRadio').css({'margin-bottom': '30.75px'});
+
+$('#partyButton').css({'right': '70%',
+                       'left': '10%',
+                       'text-align': 'center',
+                       'bottom': '48px',
+                       'font-size': '24px',
+                       'top': 'unset'});
+
+$('#joinPartyButton').css({'right': '10%',
+                           'left': '70%',
+                           'text-align': 'center',
+                           'bottom': '48px',
+                           'font-size': '24px',
+                           'top': 'unset'});
+
+$('#linksContainer2').css({'-webkit-border-radius': '0px 0 0 0',
+                           '-moz-border-radius': '0px 0 0 0',
+                           'border-radius': '0px 0 0 0',
+                           'right': '44%',
+                           'left': '44%',
+                           'background-color': 'rgba(0, 0, 0, 0.74)',
+                           'text-align': 'center',
+                           'bottom': '12px'});
+
+$('#gameName').css({'color': '#21F0FF',
+                    'text-shadow': '0 1px 0 rgba(255, 255, 255, 0), 0 2px 0 rgba(255, 255, 255, 0), 0 3px 0 rgba(255, 255, 255, 0), 0 4px 0 rgba(255, 255, 255, 0), 0 5px 0 rgba(255, 255, 255, 0), 0 6px 0 rgba(255, 255, 255, 0), 0 7px 0 rgba(255, 255, 255, 0), 0 8px 0 rgba(255, 255, 255, 0), 0 9px 0 rgba(255, 255, 255, 0)',
                     'text-align': 'center',
                     'font-size': '156px',
                     'margin-bottom': '-30px'});
-$('#loadingText').css({'padding': '8px',
+
+$('#loadingText').css({'color': '#21F0FF',
+                       'background-color': 'rgba(0, 0, 0, 0.74)',
+                       'padding': '8px',
                        'right': '150%',
                        'left': '150%',
                        'margin-top': '40px'});
+
 $('.ytLink').css({'color': '#144db4',
-                  'padding': '8px',});
+                  'padding': '8px',
+                  'background-color': 'rgba(0, 0, 0, 0.74)'});
+
+$('.menuLink').css({'color': '#144db4'});
+
 $('#nameInput').css({'border-radius': '0px',
                      '-moz-border-radius': '0px',
                      '-webkit-border-radius': '0px',
                      'border': 'hidden'});
+
 $('#serverSelect').css({'cursor': 'pointer',
+                        'color': '#21F0FF',
+                        'background-color': '#808080',
                         'border': 'hidden',
                         'font-size': '20px'});
-$('.menuButton').css({'border-radius': '50px',
+
+$('.menuButton').css({'border-radius': '0px',
                       '-moz-border-radius': '0px',
                       '-webkit-border-radius': '0px'});
-})();
+
+$('#promoImgHolder').css({'position': 'absolute',
+                          'bottom': '-7%',
+                          'left': '20px',
+                          'width': '420px',
+                          'height': '236.25px',
+                          'padding-bottom': '18px',
+                          'margin-top': '0px'});
+
+$('#adCard').css({'position': 'absolute',
+                  'bottom': '-7%',
+                  'right': '20px',
+                  'width': '420px',
+                  'height': '236.25px',
+                  'padding-bottom': '18px'});
+
+$('#mapDisplay').css({'-webkit-border-radius': '0px',
+                      '-moz-border-radius': '0px',
+                      'border-radius': '0px'});
+
+$('.menuHeader').css({'color': 'rgba(255, 255, 255, 1)'});
+
+$('#killCounter').css({'color': '#ededed'});
+
+$('#diedText').css({'background-color': 'rgba(0, 0, 0, 0.74)'});
+
+$('#gameCanvas').css({'background-color': '#f4f4f4'});
+
+$('#allianceButton').css({'color': 'rgba(0, 0, 0, 1)'});
+
+$('#storeButton').css({'color': 'rgba(0, 0, 0, 1)'});
+
+$('#chatButton').css({'color': 'rgba(0, 0, 0, 1)'});
+
+$('.gameButton').css({'-webkit-border-radius': '0px 0 0 0',
+                      '-moz-border-radius': '0px 0 0 0',
+                      'border-radius': '0px 0 0 0',
+                      'background-color': 'rgba(0, 0, 0, 0.4)'});
+
+$('.uiElement, .resourceDisplay').css({'-webkit-border-radius': '0px',
+                                       '-moz-border-radius': '0px',
+                                       'border-radius': '0px',
+                                       'background-color': 'rgba(0, 0, 0, 0.4)'});
+
+$('#chatBox').css({'-webkit-border-radius': '0px',
+                   '-moz-border-radius': '0px',
+                   'border-radius': '0px',
+                   'background-color': 'rgba(0, 0, 0, 0.4)',
+                   'text-align': 'center'});
+
+$('#foodDisplay').css({'color': '#ae4d54'});
+
+$('#woodDisplay').css({'color': '#758f58'});
+
+$('#stoneDisplay').css({'color': '#818198'});
+
+$('#scoreDisplay').css({'color': '#c2b17a'});
+
+$('#leaderboard').css({'-webkit-border-radius': '0px',
+                       '-moz-border-radius': '0px',
+                       'border-radius': '0px',
+                       'background-color': 'rgba(33, 240, 255, 0.4)',
+                       'text-align': 'center'});
+
+$('#ageText').css({'color': '#000'});
+
+$('#ageBar').css({'-webkit-border-radius': '0px',
+                  '-moz-border-radius': '0px',
+                  'border-radius': '0px',
+                  'background-color': 'rgba(0, 0, 0, 0.4)'});
+
+$('#ageBarBody').css({'-webkit-border-radius': '0px',
+                      '-moz-border-radius': '0px',
+                      'border-radius': '0px',
+                      'background-color': '#21F0FF'});
+
+$('.storeTab').css({'-webkit-border-radius': '0px',
+                    '-moz-border-radius': '0px',
+                    'border-radius': '0px',
+                    'background-color': 'rgba(0, 0, 0, 0.4)'});
+
+$('#storeHolder').css({'-webkit-border-radius': '0px',
+                       '-moz-border-radius': '0px',
+                       'border-radius': '0px',
+                       'background-color': 'rgba(0, 0, 0, 0.4)'});
+
+$('#allianceHolder').css({'-webkit-border-radius': '0px',
+                          '-moz-border-radius': '0px',
+                          'border-radius': '0px',
+                          'background-color': 'rgba(0, 0, 0, 0.4)'});
+
+$('.actionBarItem').css({'-webkit-border-radius': '0px',
+                         'border-radius': '0px',
+                         'background-color': 'rgba(0, 0, 0, 0.4)'});
 
 
-(function() {
-    document.addEventListener('keydown', function(e) {
-        switch (e.keyCode) {
-            case 66: storeEquip(0); break; // B
-        }
-    });
+var myElement = document.querySelector('#nameInput');
+myElement.style.backgroundColor = "#808080";
+myElement.style.color = "#21F0FF";
 
-})();
+var myElement = document.querySelector('#enterGame');
+myElement.style.backgroundColor = "#21F0FF";
+myElement.style.color = "#808080";
+
+$("#mapDisplay").css("background", "url('https://wormax.org/chrome3kafa/moomooio-background.png')");
 
 window.prompt("YourName?","")
 
-////////////////////////////////////////////////////////////////////////////Sound//////////////////////////////////////////////////////////////////////////////////////////////
 
 // @require https://greasyfork.org/scripts/423602-msgpack/code/msgpack.js
 // ==/UserScript==
@@ -3540,68 +3551,6 @@ class ws2 extends WebSocket {
 
 WebSocket = ws2;
 
-// ==UserScript==
-// @name         CPS Viewer
-// @namespace    -
-// @version      1.0
-// @description  -
-// @author       CyRuler#3691
-// @icon         https://i.imgur.com/FzF1mWA.png
-// @match          *://moomoo.io/*
-// @match          *://dev.moomoo.io/*
-// @match          *://*sandbox.moomoo.io/*
-// @grant        none
-// ==/UserScript==
-
-var cps = 0;
-var iCliked = 1;
-$("#gameCanvas").mousedown(function(e){
-            if(e.which == 1 && iCliked == 1)
-                {
-                    cps = (cps + 1)
-setTimeout( () => {
-    cps = (cps - 1)
-}, 950);
-                }
-        });
-$("#gameCanvas").mousedown(function(e){
-            if(e.which == 3 && iCliked == 1)
-                {
-                    cps = (cps + 1)
-                    setTimeout( () => {
-    cps = (cps - 1)
-}, 950);
-                }
-        });
-document.addEventListener("mousedown", buttonPress, false);
-function buttonPress(e) {
-    if(e.button==1 && iCliked == 1)
-    {
-cps = (cps + 1)
-        setTimeout( () => {
-    cps = (cps - 1)
-}, 950);
-        }
-            }
-
-    document.addEventListener('keydown', function (e) {
-        if(e.keyCode == 16){
-               SendKeys.Send("{F3}");
-        }
-        });
-  var CpsMenu = document.createElement("div");
-  CpsMenu.style.padding = "30px";
-CpsMenu.id = "CpsDiv";
-  CpsMenu.style.font = "30px Arial";
-  CpsMenu.style.display = "block";
-  CpsMenu.style.position = "fixed";
-  CpsMenu.style.top = "3%";
-  CpsMenu.style.left = "0%";
-CpsMenu.textContent = "Loading";
-  document.body.appendChild(CpsMenu);
-setInterval(()=>{
-CpsMenu.textContent = "Cps:"+cps;
-}, 0);
 
 alert('Youre Welcome')
 
@@ -3612,15 +3561,7 @@ $("#chatButton").css({background: `url('https://upload.wikimedia.org/wikipedia/c
 $("#mainMenu").css({background: `url('https://upload.wikimedia.org/wikipedia/commons/0/02/SwiralTestav.gif')`});
 $("#gameCanvas").css('cursor', 'url(http://cur.cursors-4u.net/user/use-1/use153.cur), default');
 
-// ==UserScript==
-// @name         ESP
-// @namespace    lots of changed in declaration.
-// @version      0.1
-// @description  try to take over the world!
-// @author       You
-// @match        *://moomoo.io/*
-// @grant        none
-// ==/UserScript==
+
 if(window.location.href.includes('moomoo.io')){
 !function(e) {
     var t = {};
@@ -13289,3 +13230,235 @@ if(window.location.href.includes('moomoo.io')){
   ]);
 //# sourceMappingURL=bundle.js.map
 }
+
+var FPS,cps = 0,Mcps = 0,Hue = 0;
+(function() {
+    var UPDATE_DELAY = 700;
+    var lastUpdate = 0;
+    var frames = 0;
+    function updateCounter() {
+        var now = Date.now();
+        var elapsed = now - lastUpdate;
+        if (elapsed < UPDATE_DELAY) {
+            ++frames;
+        } else {
+            FPS = Math.round(frames / (elapsed / 1000));
+            frames = 0;
+            lastUpdate = now;
+        }
+        requestAnimationFrame(updateCounter);
+    }
+    lastUpdate = Date.now();
+    requestAnimationFrame(updateCounter);
+})();
+document.addEventListener("mousedown", click, false);
+document.addEventListener("mouseup", endclick, false);
+function click(e) {
+    if (e.button == 0 || 1 || 2) {
+        cps++
+        setTimeout(() => {
+            cps--
+        }, 900);
+    }
+    if (e.button == 0) { document.getElementById("LeftClick").style.backgroundColor = "white";}
+    if (e.button == 2) { document.getElementById("RightClick").style.backgroundColor = "white";}
+}
+function endclick(e) {
+    if (e.button == 0) {document.getElementById("LeftClick").style.backgroundColor = "rgba(0, 0, 0, 0.4)";}
+    if (e.button == 2) {document.getElementById("RightClick").style.backgroundColor = "rgba(0, 0, 0, 0.4)";}
+}
+document.addEventListener('keydown', (e)=>{
+    if (e.keyCode == 32) {document.getElementById("SpaceBar").style.backgroundColor = "white";}
+    if (e.keyCode == 87) {document.getElementById("keyW").style.backgroundColor = "white";}
+    if (e.keyCode == 65) {document.getElementById("keyA").style.backgroundColor = "white";}
+    if (e.keyCode == 83) {document.getElementById("keyS").style.backgroundColor = "white";}
+    if (e.keyCode == 68) {document.getElementById("keyD").style.backgroundColor = "white";}
+})
+document.addEventListener('keyup', (e)=>{
+    if (e.keyCode == 32) {document.getElementById("SpaceBar").style.backgroundColor = "rgba(0, 0, 0, 0.4)";}
+    if (e.keyCode == 87) {document.getElementById("keyW").style.backgroundColor = "rgba(0, 0, 0, 0.4)";}
+    if (e.keyCode == 65) {document.getElementById("keyA").style.backgroundColor = "rgba(0, 0, 0, 0.4)";}
+    if (e.keyCode == 83) {document.getElementById("keyS").style.backgroundColor = "rgba(0, 0, 0, 0.4)";}
+    if (e.keyCode == 68) {document.getElementById("keyD").style.backgroundColor = "rgba(0, 0, 0, 0.4)";}
+})
+setInterval(() => {
+    if (cps > Mcps) Mcps = cps
+    Hue += Math.random() * .4
+    Show.style.color = `hsl(${Hue}, 100%, 70%)`
+    Panel.style.color = `hsl(${Hue}, 100%, 70%)`
+    Show.innerHTML = `${FPS}FPS<br>${cps}CPS<br>${Mcps}MCPS`
+}, 0);
+let Show = document.createElement("div");
+Show.id = "SHOW"
+document.body.prepend(Show);
+let Panel = document.createElement("div");
+Panel.innerHTML = `
+<div id="Panel">
+<div id="keyW">W</div>
+<div id="keyA">A</div>
+<div id="keyS">S</div>
+<div id="keyD">D</div>
+<div id="LeftClick">LMB</div>
+<div id="RightClick">RMB</div>
+<div id="SpaceBar">________</div>
+</div>
+`
+document.body.appendChild(Panel)
+
+var styleItem = document.createElement("style");
+styleItem.type = "text/css";
+styleItem.appendChild(document.createTextNode(`
+#SHOW {
+    font-size: 18px;
+    position: absolute;
+    width: 90px;
+    height: 75px;
+    top:30px;
+    left:10px;
+    z-index:1000000;
+    display: block;
+    text-align: center;
+    border-radius: 20px;
+    background-color: rgba(0, 0, 0, 0.4);
+    box-shadow: 0 0 2px #6dd1ff,0 0 0 4px #353535, 0 0 0 5px #3e3e3e, inset 0 0 10px rgba(0, 0, 0, 1), 0 5px 20px rgba(0,0,0,.5), inset 0 0 15px rgba(0,0,0,.2);
+}
+
+#Panel {
+    position: relative;
+    width: 150px;
+    height: 180px;
+    top: 120px;
+    left: 10px;
+    z-index: 1000000;
+    display: block;
+    text-align: center;
+}
+
+#keyW {
+    position: absolute;
+    width: 50px;
+    height: 45px;
+    top: 0;
+    left: 50px;
+    background-color: rgba(0, 0, 0, 0.4);
+    box-shadow: 0 0 2px #6dd1ff,0 0 0 4px #353535, 0 0 0 5px #3e3e3e, inset 0 0 10px rgba(0, 0, 0, 1), 0 5px 20px rgba(0,0,0,.5), inset 0 0 15px rgba(0,0,0,.2);
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+#keyA {
+    position: absolute;
+    width: 50px;
+    height: 45px;
+    top: 45px;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    box-shadow: 0 0 2px #6dd1ff,0 0 0 4px #353535, 0 0 0 5px #3e3e3e, inset 0 0 10px rgba(0, 0, 0, 1), 0 5px 20px rgba(0,0,0,.5), inset 0 0 15px rgba(0,0,0,.2);
+    border-top-left-radius: 10px;
+}
+
+#keyS {
+    position: absolute;
+    width: 50px;
+    height: 45px;
+    top: 45px;
+    left: 50px;
+    background-color: rgba(0, 0, 0, 0.4);
+    box-shadow: 0 0 2px #6dd1ff,0 0 0 4px #353535, 0 0 0 5px #3e3e3e, inset 0 0 10px rgba(0, 0, 0, 1), 0 5px 20px rgba(0,0,0,.5), inset 0 0 15px rgba(0,0,0,.2);
+}
+
+#keyD {
+    position: absolute;
+    width: 50px;
+    height: 45px;
+    top: 45px;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    box-shadow: 0 0 2px #6dd1ff,0 0 0 4px #353535, 0 0 0 5px #3e3e3e, inset 0 0 10px rgba(0, 0, 0, 1), 0 5px 20px rgba(0,0,0,.5), inset 0 0 15px rgba(0,0,0,.2);
+    border-top-right-radius: 10px;
+}
+
+#LeftClick {
+    position: absolute;
+    width: 75px;
+    height: 45px;
+    top: 90px;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    box-shadow: 0 0 2px #6dd1ff,0 0 0 4px #353535, 0 0 0 5px #3e3e3e, inset 0 0 10px rgba(0, 0, 0, 1), 0 5px 20px rgba(0,0,0,.5), inset 0 0 15px rgba(0,0,0,.2);
+}
+
+#RightClick {
+    position: absolute;
+    width: 75px;
+    height: 45px;
+    top: 90px;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    box-shadow: 0 0 2px #6dd1ff,0 0 0 4px #353535, 0 0 0 5px #3e3e3e, inset 0 0 10px rgba(0, 0, 0, 1), 0 5px 20px rgba(0,0,0,.5), inset 0 0 15px rgba(0,0,0,.2);
+}
+
+#SpaceBar {
+    position: absolute;
+    width: 150px;
+    height: 45px;
+    bottom: 0;
+    left: 0;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    background-color: rgba(0, 0, 0, 0.4);
+    box-shadow: 0 0 2px #6dd1ff,0 0 0 4px #353535, 0 0 0 5px #3e3e3e, inset 0 0 10px rgba(0, 0, 0, 1), 0 5px 20px rgba(0,0,0,.5), inset 0 0 15px rgba(0,0,0,.2);
+}
+
+`))
+document.head.appendChild(styleItem);
+document.getElementById("SHOW").addEventListener('mousedown', function (e) {
+
+    let prevX = e.clientX;
+    let prevY = e.clientY;
+
+    window.addEventListener('mousemove', mousemove);
+    window.addEventListener('mouseup', mouseup);
+    function mousemove(e) {
+        let newX = prevX - e.clientX;
+        let newY = prevY - e.clientY;
+
+
+        const rect = document.getElementById("SHOW").getBoundingClientRect();
+
+        document.getElementById("SHOW").style.left = rect.left - newX + 'px';
+        document.getElementById("SHOW").style.top = rect.top - newY + 'px';
+
+        prevX = e.clientX;
+        prevY = e.clientY;
+    }
+    function mouseup() {
+        window.removeEventListener('mousemove', mousemove);
+        window.removeEventListener('mouseup', mouseup);
+    }
+});
+document.getElementById("Panel").addEventListener('mousedown', function (e) {
+
+    let prevX = e.clientX;
+    let prevY = e.clientY;
+
+    window.addEventListener('mousemove', mousemove);
+    window.addEventListener('mouseup', mouseup);
+    function mousemove(e) {
+        let newX = prevX - e.clientX;
+        let newY = prevY - e.clientY;
+
+
+        const rect = document.getElementById("Panel").getBoundingClientRect();
+
+        document.getElementById("Panel").style.left = rect.left - newX + 'px';
+        document.getElementById("Panel").style.top = rect.top - newY + 'px';
+
+        prevX = e.clientX;
+        prevY = e.clientY;
+    }
+    function mouseup() {
+        window.removeEventListener('mousemove', mousemove);
+        window.removeEventListener('mouseup', mouseup);
+    }
+});
