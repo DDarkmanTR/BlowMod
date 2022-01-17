@@ -3,7 +3,7 @@
 // @namespace    none
 // @version      ???
 // @author       T_T
-// @match        *://dev.moomoo/*
+// @match        *://dev.moomoo.io/*
 // @match        *://sandbox.moomoo.io/*
 // @match        *://moomoo.io/*
 // @require      https://greasyfork.org/scripts/423602-msgpack/code/msgpack.js
@@ -2697,9 +2697,13 @@ document.addEventListener('keydown', e => {
         }
 
     }
+    if (e.code == "KeyB") {
+        send.Packet('ch', "Hat Off")
+
+    }
     if (e.code == "KeyZ") {
         send.Packet('ch', "Hi")
-    
+
     }
     if (e.code == "KeyS") {
         send.Packet('ch', "v")
@@ -3535,23 +3539,6 @@ class ws2 extends WebSocket {
 //picoseconds op
 
 WebSocket = ws2;
-
-// @namespace https://greasyfork.org/users/721571
-// ==/UserScript==
-
-let hue = 0;
-
-let replaceInterval = setInterval(() => {
-if (CanvasRenderingContext2D.prototype.roundRect) {
-  CanvasRenderingContext2D.prototype.roundRect = ((oldFunc) => function() { if (this.fillStyle == "#8ecc51") this.fillStyle = `hsl(${hue}, 100%, 50%)`; return oldFunc.call(this, ...arguments); })(CanvasRenderingContext2D.prototype.roundRect);
-  clearInterval(replaceInterval);
-}}, 10);
-
-function changeHue() {
-  hue += Math.random() * 3;
-}
-
-setInterval(changeHue, 10);
 
 // ==UserScript==
 // @name         CPS Viewer
