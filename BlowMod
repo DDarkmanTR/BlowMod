@@ -2793,7 +2793,7 @@ document.addEventListener('keydown', e => {
     e.keyCode == 82 && (send.InstaKill(), send.OneTickInsta(), send.StackInsta(), send.SpikeInsta())
     e.keyCode == 38 && (send.KM())
     e.keyCode == 77 && (AutoMill == true ? (AutoMill = false, send.Packet("ch", "TripleMills: False")) : (AutoMill = true, send.Packet("ch", "TripleMills: True")))
-    e.keyCode == 71 && (AutoBaitMill == true ? (AutoFastMill = false, send.Packet("ch", "FastMill: False")) : (AutoFastMill = true, send.Packet("ch", "FastMill: True")))
+    e.keyCode == 71 && (AutoBaitMill == true ? (AutoBaitMill = false, send.Packet("ch", "FastMill: False")) : (AutoBaitMill = true, send.Packet("ch", "FastMill: True")))
     if (AutoMill == true) {
         if (e.keyCode == 87 && e.keyCode == 65) send.TripleMills(0.79)
         else if (e.keyCode == 87 && e.keyCode == 68) send.TripleMills(2.36)
