@@ -86,7 +86,6 @@ let GameMenu = `
 <div class="blockMenu" style="display: none;">
     <img src="http://moomoo.io/img/icons/skull.png" style="text-align: bottom;" id="imgTitle">
     <div class="titleMenu">Setting<span class="twoTitleName">BlowMod</span></div>
-    <hr>
     <div class="ScrollFixedPositionBlock">
         <a class="ScrollElementBox" href="#ScrollElement1"><span>AutoHeal</span></a>
         <a class="ScrollElementBox" href="#ScrollElement2"><span>AntiInsta</span></a>
@@ -296,7 +295,6 @@ let GameMenu = `
             </fieldset>
         </div>
     </div>
-    <hr />
     <footer>
         T_T = Owner
     </footer>
@@ -309,12 +307,9 @@ let GameMenu = `
         display: none;
     }
     .ScrollElementBox {
-        display: inline-block;
         width: auto;
         height: auto;
-        padding: 5px;
         text-align: center;
-        border: 2px solid #4a4a4a;
         border-radius: 4px;
         transition: 0.5s all;
         cursor: url(
@@ -421,11 +416,7 @@ let GameMenu = `
     }
 
     fieldset {
-        padding: 0;
-        padding-bottom: 13.5px;
-        padding-left: 10px;
         border-radius: 7px;
-        border: 2px solid #39342d;
     }
 
     legend {
@@ -454,7 +445,6 @@ let GameMenu = `
 
     .blockSetting {
         display: block;
-        background: rgba(209, 209, 209, 0.73);
         overflow-y: scroll;
         overflow-x: hidden;
         width: 660px;
@@ -495,7 +485,6 @@ let GameMenu = `
     }
 
     .blockMenu {
-        cursor: url(https://media.discordapp.net/attachments/888409659743010867/889974791698804776/free-icon-cursor-747970_1_1.png), default;
         padding: 15px;
         position: absolute;
         display: none;
@@ -503,7 +492,6 @@ let GameMenu = `
         border-radius: 25px;
         box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.08), 0 2px 10px 0 rgba(0, 0, 0, 0.06);
         height: 565px;
-        background: rgba(191, 191, 191, 0.86);
         top: 9.8vh;
         transition: all 1s;
         left: 26.7vw;
