@@ -1,3 +1,13 @@
+// ==UserScript==
+// @name       moomoo sounds
+// @namespace    https://justgamersmoomooscripts.glitch.me
+// @version    1.06
+// @description Give some sound to moomoo.io!
+// @author       Justgamer101
+// @match        *://sandbox.moomoo.io/*
+// @match        *://dev.moomoo.io/*
+// @match        *://moomoo.io/*
+// @grant    none
 // @require https://greasyfork.org/scripts/423602-msgpack/code/msgpack.js
 // ==/UserScript==
 //add sound vol by distance
@@ -213,7 +223,7 @@ class ws2 extends WebSocket {
                                 dist: null,
                                 isMe: plinf[0] == playerDat.sid
                             },
-                            sid = thisPlayer.sid,
+                            sid = thisPlayer.sid, 
                             temp = players[sid] || {};
 
                           //  thisPlayer.dist = Math.dist(thisPlayer, temp);//distance from last update
@@ -237,7 +247,7 @@ class ws2 extends WebSocket {
                                 players[sid].wasInSnow = players[sid].inSnow;
                                 players[sid].inSnow = false;
                             }
-
+                            
                             if(thisPlayer.isMe){
                                 if(players[sid].inSnow){
                                     if(players[sid].notInSnow || snowWind.currentTime == 0 || snowWind.ended) {
